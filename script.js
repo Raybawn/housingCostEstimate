@@ -369,6 +369,7 @@ function processFile(file) {
               }
             })
             .catch((error) => console.error("Error:", error));
+
           fetchPromises.push(fetchPromise1);
 
           // check if the "Only same datacenter?" checkbox is checked
@@ -382,7 +383,7 @@ function processFile(file) {
           }
 
           // Fetch data from Marketboard endpoint
-          fetch(
+          let fetchPromise2 = fetch(
             `https://universalis.app/api/v2/${searchRange}/${itemData.id}?listings=${listingAmount}&entries=0&hq=0&fields=itemID%2Clistings.worldName%2Clistings.lastReviewTime%2Clistings.total`
           )
             .then((response) => response.json())
@@ -407,7 +408,7 @@ function processFile(file) {
                 );
 
                 // Fetch data from Marketboard endpoint
-                let fetchPromise2 = fetch(
+                let fetchPromise3 = fetch(
                   `https://universalis.app/api/v2/${searchRange}/${itemData.id}?listings=${listingAmount}&entries=0&hq=0&fields=itemID%2Clistings.worldName%2Clistings.lastReviewTime%2Clistings.total`
                 )
                   .then((response) => response.json())
@@ -454,7 +455,7 @@ function processFile(file) {
                     reject(error); // Reject the promise if an error occurs
                   });
 
-                fetchPromises.push(fetchPromise2);
+                fetchPromises.push(fetchPromise3);
               } else {
                 // Set cell text to 'N/A' if listings array is empty
                 row.cells[10].innerText = "";
@@ -463,28 +464,29 @@ function processFile(file) {
             })
             .catch((error) => console.error("Error:", error));
 
+          fetchPromises.push(fetchPromise2);
+
           table.appendChild(row);
         }
+        // Wait for all fetch requests to complete
+        Promise.all(fetchPromises)
+          .then(() => {
+            // Append the table to the output div
+            output.appendChild(table);
+
+            // Always show the text
+            let totalsContainer = document.getElementById("totals");
+            totalsContainer.innerHTML = `Total (Price on ${worldName}): <br>Total (Cheapest Price): `;
+
+            // Wait for 1 second before showing the total values
+            setTimeout(() => {
+              totalsContainer.innerHTML = `Total (Price on ${worldName}): ${totalWorldNamePrice.toLocaleString()} Gil<br>Total (Cheapest Price): ${totalCheapestPrice.toLocaleString()} Gil`;
+            }, 1000);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
       });
-
-      // Wait for all fetch requests to complete
-      Promise.all(fetchPromises)
-        .then(() => {
-          // Append the table to the output div
-          output.appendChild(table);
-
-          // Always show the text
-          let totalsContainer = document.getElementById("totals");
-          totalsContainer.innerHTML = `Total (Price on ${worldName}): <br>Total (Cheapest Price): `;
-
-          // Wait for 1 second before showing the total values
-          setTimeout(() => {
-            totalsContainer.innerHTML = `Total (Price on ${worldName}): ${totalWorldNamePrice.toLocaleString()} Gil<br>Total (Cheapest Price): ${totalCheapestPrice.toLocaleString()} Gil`;
-          }, 1000);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
     };
 
     reader.readAsText(file);
