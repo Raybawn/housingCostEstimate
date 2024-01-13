@@ -1,4 +1,4 @@
-let version = "1.0.0, 13.01.2021, 11:15";
+let version = "1.0.1, 13.01.2021, 11:25";
 console.log("Version: " + version);
 
 let dropZone = document.getElementById("drop_zone");
@@ -101,11 +101,18 @@ fetch("worlds.json") // replace 'worlds.json' with the path to your JSON file
     // placeholder.selected = true;
     // select.appendChild(placeholder);
 
-    // Create an option for each world
-    data.forEach((world) => {
+    // Create an option for each world and use Phoenix if no cookie exists
+
+    data.forEach(function (world) {
       let option = document.createElement("option");
       option.value = world.id;
       option.text = world.name;
+      // if no cookie exists, set the selected option to Phoenix
+      if (!worldCookie) {
+        if (world.name === "Phoenix") {
+          option.selected = true;
+        }
+      }
       select.appendChild(option);
     });
 
