@@ -1,3 +1,6 @@
+let version = "1.0.0, 13.01.2021, 11:15";
+console.log("Version: " + version);
+
 let dropZone = document.getElementById("drop_zone");
 let output = document.getElementById("output");
 let fileInput = document.getElementById("file_input");
