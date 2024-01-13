@@ -1,4 +1,4 @@
-let version = "1.0.1, 13.01.2021, 11:25";
+let version = "1.0.2, 13.01.2021, 11:43";
 console.log("Version: " + version);
 
 let dropZone = document.getElementById("drop_zone");
@@ -10,6 +10,10 @@ let worldName = "";
 let datacenterName = "";
 let region = "";
 let searchRange = "";
+
+let defaultWorldName = "Phoenix";
+let defaultDatacenterName = "Light";
+let defaultRegion = "Europe";
 
 let file = null;
 
@@ -28,18 +32,23 @@ let checkboxCookie = cookies.find((row) =>
 
 // if there are no cookies, set the worldName, datacenterName, and region cookies to default values: "Phoenix", "Light", "Europe", and "onlySameDatacenter" to false
 if (!worldCookie) {
+  worldName = defaultWorldName;
   document.cookie = "worldName=Phoenix; SameSite=Lax";
+  document.cookie = "worldId=56; SameSite=Lax";
 } else {
   worldName = worldCookie.split("=")[1];
+  worldId = worldCookie.split("=")[2];
 }
 
 if (!datacenterCookie) {
+  datacenterName = defaultDatacenterName;
   document.cookie = "datacenterName=Light; SameSite=Lax";
 } else {
   datacenterName = datacenterCookie.split("=")[1];
 }
 
 if (!regionCookie) {
+  region = defaultRegion;
   document.cookie = "region=Europe; SameSite=Lax";
 } else {
   region = regionCookie.split("=")[1];
@@ -101,18 +110,11 @@ fetch("worlds.json") // replace 'worlds.json' with the path to your JSON file
     // placeholder.selected = true;
     // select.appendChild(placeholder);
 
-    // Create an option for each world and use Phoenix if no cookie exists
-
+    // Create an option for each world
     data.forEach(function (world) {
       let option = document.createElement("option");
       option.value = world.id;
       option.text = world.name;
-      // if no cookie exists, set the selected option to Phoenix
-      if (!worldCookie) {
-        if (world.name === "Phoenix") {
-          option.selected = true;
-        }
-      }
       select.appendChild(option);
     });
 
@@ -172,12 +174,15 @@ fetch("worlds.json") // replace 'worlds.json' with the path to your JSON file
       }
     };
 
-    // Check if the selectedWorld cookie exists and set the selected option
+    // Check if the selectedWorld cookie exists and set the selected option if not set to the defaultWorldName
     let cookies = document.cookie.split("; ");
     let selectedWorld = cookies.find((row) => row.startsWith("worldId="));
     if (selectedWorld) {
       let selectedWorldId = selectedWorld.split("=")[1];
       select.value = selectedWorldId;
+    } else {
+      // If the selectedWorld cookie does not exist, set the selected option to the first option
+      select.selectedIndex = defaultWorldName;
     }
 
     // Create a new div for the checkbox and label
