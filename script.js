@@ -1,4 +1,4 @@
-let version = "1.0.2, 13.01.2021, 11:43";
+let version = "1.0.3, 16.01.2024, 16:47";
 console.log("Version: " + version);
 
 let dropZone = document.getElementById("drop_zone");
@@ -441,11 +441,14 @@ function processFile(file) {
                 // Set cell text to 'N/A' if listings array is empty
                 row.cells[10].innerText = "";
               }
-              // Calculate totals
-              let priceOnWorldName = row.cells[10].innerText;
-              if (priceOnWorldName) {
-                totalWorldNamePrice += itemAmount * priceOnWorldName;
-              }
+              // Calculate totals, take cells[6] (vendor price) if it's not empty, otherwise take cells[10] (world price)
+              totalWorldNamePrice +=
+                itemAmount *
+                Math.round(
+                  row.cells[6].innerText > 0
+                    ? row.cells[6].innerText
+                    : row.cells[10].innerText
+                );
             })
             .catch((error) => console.error("Error:", error));
 
@@ -519,8 +522,14 @@ function processFile(file) {
                       // Update "Cheapest Price" cell with median price, rounded to 1
                       row.cells[12].innerText = Math.round(median);
 
-                      // Calculate totals
-                      totalCheapestPrice += itemAmount * Math.round(median);
+                      // Calculate totals take cells[6] if it's not empty, otherwise take cells[12] (cheapest world price)
+                      totalCheapestPrice +=
+                        itemAmount *
+                        Math.round(
+                          row.cells[6].innerText > 0
+                            ? row.cells[6].innerText
+                            : row.cells[12].innerText
+                        );
                     } else {
                       // Set cell text to 'N/A' if listings array is empty
                       row.cells[11].innerText = "";
