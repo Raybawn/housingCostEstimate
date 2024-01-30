@@ -6,7 +6,7 @@ It uses the *-list.txt* file to check for vendor prices, if it could be crafted,
 It will also get the current marketboard listings for a the items, giving a estimate on how much it will cost, and from which server. Also it will show how much it would cost, if bought from the user specified server.
 
 this tool is mainly used by myself to help me cut costs on builds.
-It is also available on https://housing.alfadata.io if you want to test it out.
+It is also available on [https://housing.ashyro.io](https://housing.ashyro.io/) if you want to test it out.
 
 # Features
 - Drag and Drop or Search through filesystem
@@ -20,9 +20,9 @@ Done, you have now a rough estimate of how much it would cost to buy all the ite
 You can download the results as a csv if you wish
 
 # Future plans
-- I need to implement the marketboard data yet
+- ~~I need to implement the marketboard data yet~~
 - Add the same functionality for Dyes to see which dyes can be bought from vendor, can be crafted, or bought from marketboard
-- Use a cookie to store the selected World / Server, so it doesn't need to be selected everytime
+- ~~Use a cookie to store the selected World / Server, so it doesn't need to be selected everytime~~
 - Add Tooltips or a little "How to" on the site
 - Make it more pretty but still minimal and clean
 - Keep the performance high
