@@ -567,7 +567,7 @@ function processFile(file) {
       // Wait for 1 second before showing the total values
       setTimeout(() => {
         totalsContainer.innerHTML = `Total (Price on ${worldName}): ${totalWorldNamePrice.toLocaleString()} Gil<br>Total (Cheapest Price): ${totalCheapestPrice.toLocaleString()} Gil`;
-      }, 1000);
+      }, 3000);
     };
 
     reader.readAsText(file);
