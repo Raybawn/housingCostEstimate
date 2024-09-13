@@ -1,0 +1,15 @@
+{
+  "name": "housingcostestimate",
+  "version": "1.0.0",
+  "description": "This is NOT a tool to estimate the real world housing cost!\r This is a tool to **estimate** how much it will cost to get all the housing items used for a Final Fantasy XIV Housing design made with the Program MakePlace.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}
