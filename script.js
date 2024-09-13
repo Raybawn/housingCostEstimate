@@ -410,9 +410,13 @@ function processFile(file) {
                     const fetchDataFromNetlify = async (apiType, worldName, searchRange, itemID, listingAmount, fields) => {
                         const url = `https://housing.ashyro.io/.netlify/functions/universalis?apiType=${apiType}&worldName=${worldName}&searchRange=${searchRange}&itemID=${itemID}&listings=${listingAmount}&fields=${encodeURIComponent(fields)}`;
                         const response = await fetch(url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
                         const data = await response.json();
                         return data;
                     };
+
                     // Fetch the price for the current world (worldName)
                     const fetchPricesForWorld = async (worldName, itemData, listingAmount) => {
                         try {
@@ -443,7 +447,7 @@ function processFile(file) {
                         }
                     };
 
-                    // Determine if we should search the entire region or just the same datacenter
+                    // Fetch the price for the cheapest world in the search range
                     const fetchPricesForCheapestWorld = async (searchRange, itemData, listingAmount) => {
                         try {
                             const fields = 'itemID,listings.worldName,listings.total';
@@ -490,14 +494,15 @@ function processFile(file) {
 
                     // Determine if we should search the entire region or just the same datacenter
                     let checkbox = document.getElementById("onlySameDatacenter");
-                    searchRange = checkbox.checked ? datacenterName : region;
+                    let searchRange = checkbox.checked ? datacenterName : region;
 
                     fetchPromises.push(fetchPricesForCheapestWorld(searchRange, itemData, listingAmount));
 
-
-                    fetchPromises.push(fetchPromise2);
+                    // Wait for all fetch promises to complete
+                    Promise.all(fetchPromises).catch(error => console.error('Error in fetch promises:', error));
                 }
             });
+
 
             // Append the table to the output div
             output.appendChild(table);
