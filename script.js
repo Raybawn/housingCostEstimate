@@ -417,7 +417,6 @@ function processFile(file) {
                         return data;
                     };
 
-                    // Fetch the price for the current world (worldName)
                     const fetchPricesForWorld = async (worldName, itemData, listingAmount) => {
                         try {
                             const fields = 'itemID,listings.lastReviewTime,listings.total';
@@ -432,22 +431,24 @@ function processFile(file) {
                                     : prices[(prices.length - 1) / 2];
 
                                 row.cells[10].innerText = Math.round(median);
+
+                                let priceOnWorld = row.cells[6].innerText > 0
+                                    ? row.cells[6].innerText
+                                    : row.cells[10].innerText;
+
+                                // Check if priceOnWorld is a valid number
+                                if (!isNaN(priceOnWorld) && priceOnWorld !== "N/A") {
+                                    totalWorldNamePrice += itemAmount * Math.round(priceOnWorld);
+                                }
                             } else {
                                 row.cells[10].innerText = "N/A";
                             }
-
-                            totalWorldNamePrice += itemAmount * Math.round(
-                                row.cells[6].innerText > 0
-                                    ? row.cells[6].innerText
-                                    : row.cells[10].innerText
-                            );
                         } catch (error) {
                             console.error('Error fetching data for world:', error);
                             row.cells[10].innerText = "Error";
                         }
                     };
 
-                    // Fetch the price for the cheapest world in the search range
                     const fetchPricesForCheapestWorld = async (searchRange, itemData, listingAmount) => {
                         try {
                             const fields = 'itemID,listings.worldName,listings.total';
@@ -472,11 +473,14 @@ function processFile(file) {
                                 row.cells[11].innerText = mostCommonWorld;
                                 row.cells[12].innerText = Math.round(median);
 
-                                totalCheapestPrice += itemAmount * Math.round(
-                                    row.cells[6].innerText > 0
-                                        ? row.cells[6].innerText
-                                        : row.cells[12].innerText
-                                );
+                                let priceOnWorld = row.cells[6].innerText > 0
+                                    ? row.cells[6].innerText
+                                    : row.cells[12].innerText;
+
+                                // Check if priceOnWorld is a valid number
+                                if (!isNaN(priceOnWorld) && priceOnWorld !== "N/A") {
+                                    totalCheapestPrice += itemAmount * Math.round(priceOnWorld);
+                                }
                             } else {
                                 row.cells[11].innerText = "N/A";
                                 row.cells[12].innerText = "N/A";
