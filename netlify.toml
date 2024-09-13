@@ -1,0 +1,5 @@
+[build]
+  functions = "functions/"  # The folder where your serverless functions will reside
+
+[functions]
+  directory = "functions"
