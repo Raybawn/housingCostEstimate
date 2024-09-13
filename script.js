@@ -408,12 +408,11 @@ function processFile(file) {
 
                     // Function to fetch data from the Netlify function
                     const fetchDataFromNetlify = async (apiType, worldName, searchRange, itemID, listingAmount, fields) => {
-                        const url = `https://ashyroshousing.netlify.app/.netlify/functions/universalis?apiType=${apiType}&worldName=${worldName}&searchRange=${searchRange}&itemID=${itemID}&listings=${listingAmount}&fields=${encodeURIComponent(fields)}`;
+                        const url = `https://housing.ashyro.io/.netlify/functions/universalis?apiType=${apiType}&worldName=${worldName}&searchRange=${searchRange}&itemID=${itemID}&listings=${listingAmount}&fields=${encodeURIComponent(fields)}`;
                         const response = await fetch(url);
                         const data = await response.json();
                         return data;
                     };
-
                     // Fetch the price for the current world (worldName)
                     const fetchPricesForWorld = async (worldName, itemData, listingAmount) => {
                         try {
