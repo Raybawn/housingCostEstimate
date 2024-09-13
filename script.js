@@ -323,14 +323,14 @@ fetch("itemNames.json") // replace 'itemNames.json' with the path to your JSON f
     .catch((error) => console.error("Error:", error));
 
 // PROCESS FILES
-
 function processFile(file) {
     // Reset the totals
     totalWorldNamePrice = 0;
     totalCheapestPrice = 0;
 
     output.innerHTML = ""; // clear the output div
-    if (file.type == "text/plain") {
+
+    if (file.type === "text/plain") {
         let reader = new FileReader();
         reader.onload = function (e) {
             let text = e.target.result;
@@ -488,8 +488,7 @@ function processFile(file) {
                         }
                     };
 
-                    // Call the functions as needed
-                    let fetchPromises = [];
+                    // Call the functions and add to fetchPromises
                     fetchPromises.push(fetchPricesForWorld(worldName, itemData, listingAmount));
 
                     // Determine if we should search the entire region or just the same datacenter
@@ -497,12 +496,8 @@ function processFile(file) {
                     let searchRange = checkbox.checked ? datacenterName : region;
 
                     fetchPromises.push(fetchPricesForCheapestWorld(searchRange, itemData, listingAmount));
-
-                    // Wait for all fetch promises to complete
-                    Promise.all(fetchPromises).catch(error => console.error('Error in fetch promises:', error));
                 }
             });
-
 
             // Append the table to the output div
             output.appendChild(table);
@@ -519,3 +514,4 @@ function processFile(file) {
         reader.readAsText(file);
     }
 }
+
