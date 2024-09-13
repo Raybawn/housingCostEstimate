@@ -406,12 +406,20 @@ function processFile(file) {
 
                     let listingAmount = itemAmount < 5 ? 10 : itemAmount * 2;
 
+                    // Function to fetch data from the Netlify function
+                    const fetchDataFromNetlify = async (apiType, worldName, searchRange, itemID, listingAmount, fields) => {
+                        const url = `https://ashyroshousing.netlify.app/.netlify/functions/universalis?apiType=${apiType}&worldName=${worldName}&searchRange=${searchRange}&itemID=${itemID}&listings=${listingAmount}&fields=${encodeURIComponent(fields)}`;
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        return data;
+                    };
+
                     // Fetch the price for the current world (worldName)
-                    let fetchPromise1 = fetch(
-                        `https://universalis.app/api/v2/${worldName}/${itemData.id}?listings=${listingAmount}&entries=0&hq=0&fields=itemID%2Clistings.lastReviewTime%2Clistings.total`
-                    )
-                        .then((response) => response.json())
-                        .then((data) => {
+                    const fetchPricesForWorld = async (worldName, itemData, listingAmount) => {
+                        try {
+                            const fields = 'itemID,listings.lastReviewTime,listings.total';
+                            const data = await fetchDataFromNetlify('type1', worldName, '', itemData.id, listingAmount, fields);
+
                             if (data.listings && data.listings.length > 0) {
                                 let prices = data.listings.map((listing) => listing.total);
                                 prices.sort((a, b) => a - b);
@@ -430,20 +438,18 @@ function processFile(file) {
                                     ? row.cells[6].innerText
                                     : row.cells[10].innerText
                             );
-                        });
-
-                    fetchPromises.push(fetchPromise1);
+                        } catch (error) {
+                            console.error('Error fetching data for world:', error);
+                            row.cells[10].innerText = "Error";
+                        }
+                    };
 
                     // Determine if we should search the entire region or just the same datacenter
-                    let checkbox = document.getElementById("onlySameDatacenter");
-                    searchRange = checkbox.checked ? datacenterName : region;
+                    const fetchPricesForCheapestWorld = async (searchRange, itemData, listingAmount) => {
+                        try {
+                            const fields = 'itemID,listings.worldName,listings.total';
+                            const data = await fetchDataFromNetlify('type2', '', searchRange, itemData.id, listingAmount, fields);
 
-                    // Fetch the price for the cheapest world in the search range
-                    let fetchPromise2 = fetch(
-                        `https://universalis.app/api/v2/${searchRange}/${itemData.id}?listings=${listingAmount}&entries=0&hq=0&fields=itemID%2Clistings.worldName%2Clistings.total`
-                    )
-                        .then((response) => response.json())
-                        .then((data) => {
                             if (data.listings && data.listings.length > 0) {
                                 let worldNames = data.listings.map(listing => listing.worldName);
                                 let worldCounts = {};
@@ -472,7 +478,23 @@ function processFile(file) {
                                 row.cells[11].innerText = "N/A";
                                 row.cells[12].innerText = "N/A";
                             }
-                        });
+                        } catch (error) {
+                            console.error('Error fetching data for cheapest world:', error);
+                            row.cells[11].innerText = "Error";
+                            row.cells[12].innerText = "Error";
+                        }
+                    };
+
+                    // Call the functions as needed
+                    let fetchPromises = [];
+                    fetchPromises.push(fetchPricesForWorld(worldName, itemData, listingAmount));
+
+                    // Determine if we should search the entire region or just the same datacenter
+                    let checkbox = document.getElementById("onlySameDatacenter");
+                    searchRange = checkbox.checked ? datacenterName : region;
+
+                    fetchPromises.push(fetchPricesForCheapestWorld(searchRange, itemData, listingAmount));
+
 
                     fetchPromises.push(fetchPromise2);
                 }
